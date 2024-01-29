@@ -13,7 +13,6 @@
         </div>
       </div>
       <select name="informationType" id="informationType" [(ngModel)]="informationType" (ngModelChange)="whichInformation()">
-          <option value="sections">أقسام الصيانة</option>
           <option value="product-sections">فئات المنتجات</option>
           <option value="suppliers">الموردين</option>
           <option value="dealers">التجار</option>
@@ -22,32 +21,6 @@
     </div>
 
     <div class="output" *ngIf="!isSearched">
-        <div class="sections" *ngIf="informationType === 'sections'">
-            <div class="cards-container" fxLayout="column" fxLayoutGap="20px" >
-                <mat-card class="deviceCard" *ngFor="let section of sections">
-                  <mat-card-content fxLayout="column" fxLayoutGap="10px">
-                    <div fxLayout="column" fxLayoutAlign="center">
-                      <div class="data-row">
-                        <div class="data-column">
-                          <p><strong>ID:</strong> {{ section._id }}</p>
-                        </div>
-                        <div class="data-column">
-                          <p><strong>Section:</strong> {{ section.name }}</p>
-                        </div>
-                        <div class="data-column">
-                          <p><strong>Checking Fees:</strong> {{ section.checkingFees }}</p>
-                        </div>
-                        <div class="data-column">
-                          <p><strong>Notes:</strong> {{ section.description }}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <button class="editButton" mat-button [routerLink]="['/addInformation', section._id, 'edit']">تعديل / تحديث</button>
-                    <button class="editButton" mat-button (click)="onDelete(section._id)">حذف</button>
-                  </mat-card-content>
-                </mat-card>
-            </div>
-        </div>
         <div class="ProductSections" *ngIf="informationType === 'product-sections'">
           <div class="cards-container" fxLayout="column" fxLayoutGap="20px" >
               <mat-card class="deviceCard" *ngFor="let productSection of productSections">

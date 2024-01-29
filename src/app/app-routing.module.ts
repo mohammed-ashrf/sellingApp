@@ -5,12 +5,8 @@ import { canActivateLoggedIn, canActivateHasAccess, CanActivateRole } from './gu
 import { LoginComponent } from './auth/login/login/login.component';
 import { RegisterComponent } from './auth/register/register/register.component';
 import { GetUsersComponent } from './get-users/get-users.component';
-import { DeviceListComponent } from './device/device-list/device-list/device-list.component';
-import { DeviceFormComponent } from './device/device-form/device-form/device-form.component';
-import { SearchComponent } from './search/search.component';
 import { PrintLayoutComponent } from './print-layout/print-layout.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
-import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { ProductsComponent } from './products/products.component';
 import { AddProductsComponent } from './add-products/add-products.component';
 import { SellComponent } from './sell/sell.component';
@@ -22,6 +18,8 @@ import { NotificationComponent } from './notification/notification.component';
 import { ExpensesComponent } from './expenses/expenses.component';
 import { SafeComponent } from './safe/safe.component';
 import { LossesComponent } from './losses/losses.component';
+import { CompanyDetailsComponent } from './company-details/company-details.component';
+import { DeviceListComponent } from './device-list/device-list/device-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -29,15 +27,10 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'register/:id/edit', component: RegisterComponent },
   { path: 'users', component: GetUsersComponent},
-  { path: 'devices', component: DeviceListComponent },
-  { path: 'devices/new', component: DeviceFormComponent },
-  { path: 'devices/:id/edit', component: DeviceFormComponent },
-  { path: 'devices-delivered/:id/edit', component: DeviceFormComponent},
-  { path: 'search', component: SearchComponent},
   { path: 'print',  component: PrintLayoutComponent},
   { path: 'admin', component: AdminPageComponent, canActivate: [canActivateLoggedIn, CanActivateRole] },
-  { path: 'userDashboard', component: UserDashboardComponent },
   { path: 'products', component: ProductsComponent},
+  { path: 'devices', component: DeviceListComponent},
   { path: 'addProduct', component: AddProductsComponent},
   { path: 'addProduct/:id/edit', component: AddProductsComponent},
   { path: 'sell', component: SellComponent},
@@ -50,7 +43,8 @@ const routes: Routes = [
   { path: 'notifications', component: NotificationComponent},
   { path: 'expenses', component: ExpensesComponent},
   { path: 'safe', component:SafeComponent},
-  { path: 'losses', component:LossesComponent}
+  { path: 'losses', component:LossesComponent},
+  { path: 'companyDetails', component:CompanyDetailsComponent},
 ];
 
 @NgModule({

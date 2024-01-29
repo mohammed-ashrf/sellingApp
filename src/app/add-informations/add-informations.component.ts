@@ -64,7 +64,7 @@ export class AddInformationsComponent implements OnInit {
   isProductSection = false;
   isSupplier = false;
   isDollarPrice = false;
-  informationType: string = 'sections';
+  informationType: string = 'suppliers';
   constructor(
     private informationService: InformationService,
     private route: ActivatedRoute,
@@ -129,31 +129,6 @@ export class AddInformationsComponent implements OnInit {
     await dialogRef.afterClosed().toPromise();
   }
 
-  submitSection(form: NgForm) {
-    if (this.isNew) {
-      this.informationService.addSection(this.section).subscribe(
-        (section) => {
-          let message = `Success saving section ${section.name}.`;
-          window.alert(message);
-          form.resetForm();
-        },(error) => {
-          console.error('Error creating section:', error);
-          window.alert(error);
-        }
-      )
-    }else {
-      this.informationService.updateSection(this.section._id, this.section).subscribe(
-        () => {
-          let message = `Section Updated`;
-          window.alert(message);
-        }, (error) => {
-          console.error('Error updating section:', JSON.stringify(error));
-          window.alert(`Error updating section: ${JSON.stringify(error)}. Please try again later.`);
-        }
-      )
-    }
-  }
-
   submitProductSection(form: NgForm) {
     if (this.isNew) {
       this.informationService.addProductSection(this.productSection).subscribe(
@@ -196,8 +171,8 @@ export class AddInformationsComponent implements OnInit {
         () => {
           window.alert('Supplier Updated');
         }, (error) => {
-          console.error('Error updating supplier:', JSON.stringify(error));
-          window.alert(`Error updating supplier: ${JSON.stringify(error)}. Please try again later.`);
+          console.error('Error updating supplier:', JSON.stringify(error.message));
+          window.alert(`Error updating supplier: ${JSON.stringify(error.message)}. Please try again later.`);
         }
       )
     }

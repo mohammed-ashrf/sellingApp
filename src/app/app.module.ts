@@ -26,14 +26,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login/login.component';
 import { RegisterComponent } from './auth/register/register/register.component';
-import { DeviceListComponent } from './device/device-list/device-list/device-list.component';
-import { DeviceFormComponent } from './device/device-form/device-form/device-form.component';
 import { NgxPrintModule } from 'ngx-print';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { SearchComponent } from './search/search.component';
 import { PrintLayoutComponent } from './print-layout/print-layout.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
-import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { ProductsComponent } from './products/products.component';
 import { AddProductsComponent } from './add-products/add-products.component';
 import { SellComponent } from './sell/sell.component';
@@ -51,23 +47,20 @@ import { ExpensesComponent } from './expenses/expenses.component';
 import { SafeComponent } from './safe/safe.component';
 import { LossesComponent } from './losses/losses.component';
 import { SpotlightOverlayComponent } from './spotlight-overlay/spotlight-overlay.component';
-
+import { DeviceListComponent } from './device-list/device-list/device-list.component';
 import { AuthService } from './auth/auth.service';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DisableRightClickDirective } from './disable-right-click.directive';
 import { DocumentEditorModule } from "@onlyoffice/document-editor-angular";
+import { CompanyDetailsComponent } from './company-details/company-details.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    DeviceListComponent,
-    DeviceFormComponent,
-    SearchComponent,
     PrintLayoutComponent,
     AdminPageComponent,
-    UserDashboardComponent,
     ProductsComponent,
     AddProductsComponent,
     SellComponent,
@@ -86,6 +79,8 @@ import { DocumentEditorModule } from "@onlyoffice/document-editor-angular";
     LossesComponent,
     DisableRightClickDirective,
     SpotlightOverlayComponent,
+    CompanyDetailsComponent,
+    DeviceListComponent
   ],
   imports: [
     BrowserModule,

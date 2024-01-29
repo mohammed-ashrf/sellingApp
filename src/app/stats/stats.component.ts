@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../services/charts.service';
 import { CartService, Buyer } from '../services/cart.service';
 import { ProductsQuery } from '../shared/products';
-import { DeviceService } from '../device/device.service';
 import { Receive } from '../shared/recieve';
 import { Query } from '../shared/recieve';
 import { AuthService } from '../auth/auth.service';
@@ -96,14 +95,12 @@ export class StatsComponent implements OnInit {
   }
   constructor(private chartService: ChartsService,
     private cartService: CartService,
-    private deviceService: DeviceService,
     private authService: AuthService,
     private informationService: InformationService,
     private productsService: ProductsService) { }
 
   ngOnInit() {
     this.getBuyers();
-    this.getDevices();
     this.getUsers();
     this.getInformations();
     this.calBuyingmoneyTotal();
@@ -133,28 +130,6 @@ export class StatsComponent implements OnInit {
     );
   }
 
-  getDevices() {
-    this.deviceService.getAll().subscribe(async(devices) => {
-      this.devices = devices;
-      this.inAppDevices = devices;
-      this.allDevices = devices;
-      await this.getDeliveredDevices();
-    });
-  }
-
-  getDeliveredDevices(){
-    this.deviceService.getAllDeliveredDevices().subscribe((deliveredDevices) => {
-      this.deliveredDevices = deliveredDevices;
-      let tempDevices = deliveredDevices;
-      const length = this.allDevices.length;
-      for (let i = 0; i < length; i++) {
-        tempDevices.push(this.allDevices[i]);
-      }
-      this.allDevices = tempDevices;
-      console.log(this.allDevices.length);
-      this.filterDevices();
-    })
-  }
   calsellingMoneyTotal(buyers:Buyer[]) {
     this.sellingMoneyTotal = buyers.reduce((total, buyer) => {
       return total + buyer.carts.reduce((subtotal, cart) => {
@@ -248,54 +223,6 @@ export class StatsComponent implements OnInit {
     }, 0);
   }
 
-  filterDevices() {
-    this.devices = this.allDevices;
-    const filterCriteria = {
-      repaired: this.query.repaired,
-      paidAdmissionFees: this.query.paidAdmissionFees,
-      delivered: this.query.delivered,
-      returned: this.query.returned,
-      inProgress: this.query.inProgress,
-      engineer: this.query.engineer,
-      priority: this.query.priority,
-      newDevices: this.query.newDevices,
-      today: this.query.today,
-      thisMonth: this.query.thisMonth,
-      thisYear: this.query.thisYear,
-      specificYear: this.query.specificYear,
-      startDate: this.query.startDate,
-      endDate: this.query.endDate
-    };
-    const devices = this.deviceService.filterDevices(this.allDevices, filterCriteria);
-    this.devices = devices;
-    this.calRepairMoneyTotal(devices);
-    this.calProductsMoneyInRepair(devices);
-    this.calPurchaseProductsMoneyInRepair(devices);
-    this.calRepairMoneyProfites();
-
-    this.TotalChartUrl = this.generateChart(this.sellingMoneyTotal, this.ReapirMoneyTotal, this.type, this.labels,this.datasetsLabel,this.backgroundColor);
-    this.profitsChartUrl = this.generateChart(this.sellingMoneyProfites, this.repairMoneyProfites, 'pie', this.labels,'صافي الإيرادات',this.backgroundColor);
-  }
-
-  resetDevicesFilter():void {
-    this.query = {
-      repaired: false,
-      paidAdmissionFees: false,
-      delivered: true,
-      returned: false,
-      inProgress: false,
-      newDevices: false,
-      today: false,
-      thisMonth: true,
-      thisYear: false,
-      specificYear: '',
-      engineer: '',
-      priority: '',
-      startDate: '',
-      endDate: ''
-    }
-    this.filterDevices();
-  }
 
   filterCarts() {
     this.buyers = this.allBuyers;

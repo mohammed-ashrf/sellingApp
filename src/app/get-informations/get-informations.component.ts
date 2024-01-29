@@ -46,14 +46,7 @@ export class GetInformationsComponent implements OnInit{
 
   whichInformation() {
     this.notHidden = true;
-    if(this.informationType === 'sections'){
-      this.informationService.getSections().subscribe(
-        (sections) => {
-          this.sections = sections;
-          localStorage.setItem('informationType', this.informationType);
-        }
-      );
-    }else if(this.informationType === 'product-sections'){
+    if(this.informationType === 'product-sections'){
       this.informationService.getProductSections().subscribe(
         (productSections) => {
           this.productSections = productSections;

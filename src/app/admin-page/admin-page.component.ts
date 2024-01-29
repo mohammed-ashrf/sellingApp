@@ -1,41 +1,43 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Receive,Query } from 'src/app/shared/recieve';
-import { DeviceService } from '../device/device.service';
+import { CartService, Buyer, Cart } from '../services/cart.service';
 import { AuthService } from '../auth/auth.service';
+import { ProductsQuery } from '../shared/products';
+import { ProductSection } from '../shared/information';
+import { InformationService } from '../services/information.service';
 @Component({
   selector: 'app-admin-page',
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent implements OnInit {
-  devices: Receive[] = [];
-  allDevices: Receive[] = [];
+  buyers: Buyer[] = [];
+  allBuyers: Buyer[] = [];
   DevicesCount!:number;
   filteredDevicesCount !: number;
-  allFileterdDevices: Receive[] = [];
-  query:Query = {
-    repaired: true,
-    paidAdmissionFees: false,
-    delivered: false,
-    returned: false,
-    inProgress: false,
-    newDevices: false,
+  productSections: ProductSection[] = [];
+  allFileterdBuyers: Buyer[] = [];
+  cartsQuery: ProductsQuery = {
+    category: '',
+    payType: '',
+    buyerType: '',
+    sellerName: '',
     today: false,
     thisMonth: true,
     thisYear: false,
     specificYear: '',
-    engineer: '',
-    priority: '',
+    status: '',
     startDate: '',
-    endDate: ''
-  }
+    endDate: '',
+    thisWeek: false
+  };
   users:any;
   page: number = 0;
   itemToload: number = 0;
   currentUser: string | null;
   user: any;
-  constructor(private deviceService: DeviceService, private router: Router, private authService: AuthService) {
+  constructor(private cartService: CartService, private router: Router, private informationService: InformationService,
+    private authService: AuthService) {
     this.currentUser = localStorage.getItem('user');
       if (this.currentUser) {
         this.user = JSON.parse(this.currentUser);
@@ -44,7 +46,7 @@ export class AdminPageComponent implements OnInit {
 
   ngOnInit(): void {
     localStorage.setItem("location", "admin");
-    this.getAllDevices();
+    this.getBuyers();
     this.getUsers();
     const cardsContainer =  document.getElementById('cards-container');
     if (cardsContainer) {
@@ -53,15 +55,15 @@ export class AdminPageComponent implements OnInit {
 
         if (Math.abs(scrollHeight - clientHeight - scrollTop) < 1) {
             console.log('scrolled');
-            if (this.allFileterdDevices.length > this.devices.length) {
+            if (this.allFileterdBuyers.length > this.buyers.length) {
               this.itemToload += 10;
-              this.devices = this.allFileterdDevices.slice(0, this.itemToload);
+              this.buyers = this.allFileterdBuyers.slice(0, this.itemToload);
               console.log(' scrolling loaded');
             }
         }
       });
     }
-
+    this.getInformations();
   }
   getUsers() {
     this.authService.getUsers().subscribe(
@@ -71,86 +73,68 @@ export class AdminPageComponent implements OnInit {
     )
   }
 
-  getDevicesByPage() {
-    this.deviceService.getDevicesByPage(this.page).subscribe((devices) => {
-      this.devices = devices.reverse();
-      this.allDevices = this.devices;
-      this.filterDevices();
-    });
+  getBuyers() {
+    this.cartService.getBuyers().subscribe(
+      (buyers) => {
+        this.allBuyers = buyers;
+        this.buyers = buyers;
+        this.filterCarts();
+      }
+    );
   }
 
-  getAllDevices() {
-    this.deviceService.getAll().subscribe(async (devices) => {
-      this.devices = devices.reverse();
-      this.allDevices = this.devices;
-      await this.filterDevices();
-      this.DevicesCount = this.allDevices.length;
-    });
+  getInformations() {
+    this.informationService.getProductSections().subscribe(
+      (productSections) => {
+        this.productSections = productSections;
+      }
+    )
   }
 
   loadDevices() {
       this.itemToload = 10;
-      this.devices = this.allFileterdDevices.slice(0, this.itemToload);
+      this.buyers = this.allFileterdBuyers.slice(0, this.itemToload);
       console.log('esleLoaded');
   }
 
-  filterDevices() {
-    this.devices = this.allDevices;
+  filterCarts() {
+    this.buyers = this.allBuyers;
     const filterCriteria = {
-      repaired: this.query.repaired,
-      paidAdmissionFees: this.query.paidAdmissionFees,
-      delivered: this.query.delivered,
-      returned: this.query.returned,
-      inProgress: this.query.inProgress,
-      newDevices: this.query.newDevices,
-      today: this.query.today,
-      thisMonth: this.query.thisMonth,
-      thisYear: this.query.thisYear,
-      specificYear: this.query.specificYear,
-      engineer: this.query.engineer,
-      priority: this.query.priority,
-      startDate: this.query.startDate,
-      endDate: this.query.endDate
+      category: this.cartsQuery.category,
+      payType: this.cartsQuery.payType,
+      buyerType: this.cartsQuery.buyerType,
+      sellerName: this.cartsQuery.sellerName,
+      status: this.cartsQuery.status,
+      today: this.cartsQuery.today,
+      thisWeek: this.cartsQuery.thisWeek,
+      thisMonth: this.cartsQuery.thisMonth,
+      thisYear: this.cartsQuery.thisYear,
+      specificYear: this.cartsQuery.specificYear,
+      startDate: this.cartsQuery.startDate,
+      endDate: this.cartsQuery.endDate
     };
-    const devices = this.deviceService.filterDevices(this.allDevices, filterCriteria);
-    this.filteredDevicesCount = devices.length;
-    this.allFileterdDevices = devices;
+    const buyers = this.cartService.filterSoldCarts(this.allBuyers, filterCriteria);
+    this.allFileterdBuyers = buyers;
+    this.buyers = buyers;
     this.loadDevices();
   }
 
   resetFilter():void {
-    this.query = {
-      repaired : false,
-      paidAdmissionFees : false,
-      delivered : false,
-      returned : false,
-      inProgress : true,
-      newDevices: false,
+    this.cartsQuery = {
+      category: '',
+      payType: '',
+      buyerType: '',
+      sellerName: '',
       today: false,
-      thisMonth: true,
+      thisMonth: false,
       thisYear: false,
+      thisWeek: false,
       specificYear: '',
-      engineer: '',
-      priority: '',
+      status: '',
       startDate: '',
       endDate: ''
     }
 
-    this.filterDevices();
-  }
-
-  onDelete(id: string): void {
-    if (confirm('Are you sure you want to delete this device?')) {
-      this.deviceService.delete(id).subscribe(() => {
-        this.allFileterdDevices = this.allFileterdDevices.filter((device) => device._id !== id);
-        this.loadDevices();
-        this.DevicesCount -= 1;
-        this.filteredDevicesCount -= 1;
-      });
-    }
-  }
-
-  isPriorityHigh(priority: string): boolean {
-    return priority === 'high';
+    this.filterCarts();
   }
 }

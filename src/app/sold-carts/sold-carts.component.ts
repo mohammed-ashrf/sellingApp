@@ -29,7 +29,7 @@ export class SoldCartsComponent implements OnInit {
     startDate: '',
     endDate: '',
     thisWeek: false
-  }
+  };
   isSearched!: boolean;
   searchResult: any;
   searchTerm!: string;

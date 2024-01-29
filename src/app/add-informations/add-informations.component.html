@@ -3,30 +3,11 @@
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
         <button (click)="goBack()" class="btn btn-primary">back</button>
         <select name="informationType" id="informationType" [(ngModel)]="informationType">
-            <option value="sections">أقسام الصيانة</option>
             <option value="product-sections">فئات المنتجات</option>
             <option value="suppliers">الموردين</option>
             <option value="dealers">التجار</option>
             <option value="dollarPrice">سعر الدولار</option>
         </select>
-    </div>
-    <div class="sections" *ngIf="(isNew && informationType ==='sections')  || isSection">
-        <h3>إضافة قسم للصيانة</h3>
-        <form (ngSubmit)="submitSection(SectionForm)" #SectionForm="ngForm" dir="rtl" class="form">
-            <div fxLayout="row" fxLayoutAlign="space-between center" dir="rtl">
-                <div class="form-group" fxLayout="row" fxLayoutAlign="center center">
-                    <input type="text" id="sectionName" placeholder="اسم القسم" name="sectionName" [(ngModel)]="section.name" required>
-                </div>
-                <div class="form-group" fxLayout="row" fxLayoutAlign="center center">
-                    <label for="checkingFees">رسوم الفحص: </label>
-                    <input type="number" name="checkingFees" id="checkingFees" [(ngModel)]="section.checkingFees">
-                </div>
-            </div>
-            <div class="form-group" fxLayout="row" fxLayoutAlign="center center">
-                <textarea matInput placeholder="الملاحظات" lang="ar" dir="auto" id="notes" name="notes" cols="30" rows="2" [(ngModel)]="section.description"></textarea>
-            </div>
-            <button mat-button class="btn btn-primary" id="submit" type="submit" [disabled]="SectionForm.invalid">Save</button>
-        </form>
     </div>
     <div class="product-sections" *ngIf="(isNew && informationType === 'product-sections') || isProductSection">
         <h3>إضافة قسم للمنتجات</h3>

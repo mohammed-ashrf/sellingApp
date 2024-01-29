@@ -26,8 +26,7 @@
     </div>
     <div class="form-group">
       <mat-select placeholder="role" id="role" name="role" [(ngModel)]="role" required>
-        <mat-option class="option" dir="rtl" value="technition">Tech</mat-option>
-        <mat-option class="option" dir="rtl" value="receiver">Recieve</mat-option>
+        <mat-option class="option" dir="rtl" value="receiver">Seller</mat-option>
       </mat-select>
     </div>
     <div class="form-group" *ngIf="user.role === 'admin'">

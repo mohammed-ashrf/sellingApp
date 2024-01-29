@@ -65,8 +65,6 @@ export class LoginComponent implements OnInit {
           console.log(this.role);
           if (this.role === 'receiver') {
             return '/devices';
-          } else if (this.role === 'technition') {
-            return '/userDashboard';
           } else if (this.role === 'admin') {
             return '/admin';
           }
