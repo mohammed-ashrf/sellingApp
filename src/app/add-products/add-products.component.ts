@@ -129,23 +129,23 @@ export class AddProductsComponent implements OnInit{
     }
   }
 
-  async addMoneyToSafe(amount: number) {
-    await this.safeService.addMoney(amount, this.today, 'buyingProducts', `${this.user.username}, (${this.user._id})`).subscribe(
+  addMoneyToSafe(amount: number) {
+    this.safeService.addMoney(amount, this.today, 'buyingProducts', `${this.user.username}, (${this.user._id})`).subscribe(
       (res) => {
         console.log('add money to safe');
       }
     )
   };
 
-  async deductMoneyFromSafe(amount: number) {
-    await this.safeService.deductMoney(amount, this.today, 'buyingProducts', `${this.user.username}, (${this.user._id})`).subscribe(
+  deductMoneyFromSafe(amount: number) {
+    this.safeService.deductMoney(amount, this.today, 'buyingProducts', `${this.user.username}, (${this.user._id})`).subscribe(
       (res) => {
         console.log('deduct money from safe');
       }
     )
   };
 
-  async addSupplierProduct(productId: string) {
+  addSupplierProduct(productId: string) {
     let supplierProduct: SupplierProductAdding = {
       productId: '',
       productName: this.product.name,
@@ -159,7 +159,7 @@ export class AddProductsComponent implements OnInit{
     if(this.isNew){
       console.log("isNew");
       supplierProduct.productId = productId;
-      for (let i=0; i<= this.product.suppliers.length; i++){
+      for (let i=0; i < this.product.suppliers.length; i++){
         supplierProduct.quantity = this.product.suppliers[i].quantity;
         supplierProduct.purchasePrice = this.product.suppliers[i].purchasePrice;
         supplierProduct.purchasedate = this.product.suppliers[i].purchasedate;
@@ -169,14 +169,34 @@ export class AddProductsComponent implements OnInit{
           (res) => {
             this.product.suppliers[i].informationId = res._id;
             this.deductMoneyFromSafe(this.product.suppliers[i].whatIsPaid);
+            this.productsService.update(productId, this.product).subscribe(
+              () => {
+                console.log("informationId Added");
+                if (i === this.product.suppliers.length-1) {
+                  if (this.notBack){
+                    this.isNew = true;
+                    this.product = {
+                      name: '',
+                      description: '',
+                      deallerSellingPrice: 0,
+                      deallerSellingPriceAll: 0,
+                      userSellingPrice: 0,
+                      category: '',
+                      status: '',
+                      quantity: 0,
+                      sellingdate: '',
+                      _id: '',
+                      suppliers: [],
+                      quantitySold: 0,
+                    };
+                  }
+                }
+              }
+            );
           }
-        );        
+        );
       };
-      this.productsService.update(productId, this.product).subscribe(
-        () => {
-          console.log('updated');
-        }
-      )
+     
     }else {
       supplierProduct.productId = this.product._id;
       supplierProduct.quantity = this.supplier.quantity;
@@ -185,7 +205,7 @@ export class AddProductsComponent implements OnInit{
       supplierProduct.whatIsPaid = this.supplier.whatIsPaid;
       supplierProduct.oweing = this.supplier.oweing;
       
-      await this.informationService.updateSupplierProducts(this.supplier.id, supplierProduct).subscribe(
+      this.informationService.updateSupplierProducts(this.supplier.id, supplierProduct).subscribe(
         (res) => {
           this.supplier.informationId = res._id;
           this.product.suppliers.push(this.supplier);
@@ -213,15 +233,15 @@ export class AddProductsComponent implements OnInit{
       });
   }
 
-  async addSupplier(){
-    const cash = await this.getSafeBalance();
+  addSupplier(){
+    const cash = this.getSafeBalance();
     if(this.supplier.whatIsPaid > cash) {
       window.alert("not enough Cash in the safe");
     }else {
       this.supplier.purchasedate = this.date;
       this.supplier.id = this.selectedSupplierId;
       if(!this.isNew){
-        await this.addSupplierProduct(this.product._id);
+        this.addSupplierProduct(this.product._id);
         this.product.userSellingPrice = this.product.userSellingPrice / this.dollarPrice;
         this.product.deallerSellingPrice = this.product.deallerSellingPrice / this.dollarPrice;
         this.product.deallerSellingPriceAll = this.product.deallerSellingPriceAll / this.dollarPrice;
@@ -258,14 +278,13 @@ export class AddProductsComponent implements OnInit{
     this.informationService.deleteSupplierProduct(this.product.suppliers[supplierIndex].id, productId, this.product.suppliers[supplierIndex].informationId).subscribe(
       (res) => {
         this.addMoneyToSafe(this.product.suppliers[supplierIndex].whatIsPaid);
-        console.log(res);
       }
     );
   }
-  async deleteSupplier(index: number) {
+  deleteSupplier(index: number) {
     this.product.quantity -= this.product.suppliers[index].quantity;
     if(!this.isNew) {
-      await this.deleteSupplierProduct(index, this.product._id);
+      this.deleteSupplierProduct(index, this.product._id);
       this.product.userSellingPrice = this.product.userSellingPrice / this.dollarPrice;
       this.product.deallerSellingPrice = this.product.deallerSellingPrice / this.dollarPrice;
       this.product.deallerSellingPriceAll = this.product.deallerSellingPriceAll / this.dollarPrice;
@@ -306,13 +325,11 @@ export class AddProductsComponent implements OnInit{
       (dollar) => {
         let index = 'price';
         this.dollarPrice = dollar[index as keyof typeof dollar];
-        console.log(this.dollarPrice);
       }
     )
   }
 
   getSelectedSupplierId(supplier: Supplier){
-    console.log(supplier._id);
     this.selectedSupplierId = supplier._id;
     this.supplier.id = supplier._id;
   }
@@ -356,7 +373,7 @@ export class AddProductsComponent implements OnInit{
       }
       userInput = userInput.toLowerCase();
       return products.filter(product => {
-        return product.name.toLowerCase().includes(userInput);
+        return product?.name?.toLowerCase().includes(userInput);
       });
     } catch (error) {
       console.error(error);
@@ -368,8 +385,8 @@ export class AddProductsComponent implements OnInit{
   }
 
   onSearch() {
-      this.searchResult = this.searchProducts(this.products, this.searchTerm);
-      this.isSearched = true;
+    this.searchResult = this.searchProducts(this.products, this.searchTerm);
+    this.isSearched = true;
   }
 
   onSelect(item: Product) {
@@ -454,32 +471,31 @@ export class AddProductsComponent implements OnInit{
       // this.product.purchasedate = this.getDate();
       this.updating = false;
       this.productsService.create(this.product).subscribe(
-        async (data) => {
+        (data) => {
+          this.product = data;
           this.print = data;
           this.edited = true;
           this.recieptId = data._id.slice(-12);
-          await this.addSupplierProduct(data._id);
+          this.addSupplierProduct(data._id);
+          this.isNew = false;
           window.alert(`Success saving product ${data._id}. You can print now.`);
           // navigator.clipboard.writeText(data._id);
           this.submited = true;
-          this.isNew = false;
-          if (this.notBack){
-            form.resetForm();
-            this.product.suppliers = [];
-          }
         },
         (error) => {
           console.error('Error creating product:', error);
           window.alert(`Error creating product. ${JSON.stringify(error)}`);
         }
       );
-      console.log(this.product._id);
     } else {
       this.productsService.update(this.product._id, this.product).subscribe(
-        () => {
+        (data) => {
           // this.submited = true;
+          window.alert(`Success Updating product ${data._id}.`);
           if (this.notBack){
-           this.location.back();
+            this.isNew = true;
+            form.resetForm();
+            this.product.suppliers = [];
           }
         },
         (error) => {
